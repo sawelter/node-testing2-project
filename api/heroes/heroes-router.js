@@ -5,19 +5,32 @@ const Hero = require('./heroes-model');
 
 // get all heroes
 router.get('/', (req, res, next) => {
-    res.status(500).json('get all heroes endpoint');
+    Hero.getAll()
+        .then(heroes => {
+            res.status(200).json(heroes);
+        })
+        .catch(next);
 });
 
 // get hero by id
 router.get('/:id', (req, res, next) => {
     const { id } = req.params;
-    res.json(`get hero by id endpoint, id: ${id}`);
+    Hero.getById(id)
+        .then(hero => {
+            res.status(200).json(hero);
+        })
+        .catch(next);
 });
 
 
 // insert hero
-router.post('/', (req, res, next) => {
-    res.json('post hero');
+router.post('/', async (req, res, next) => {
+    try {
+        const newHero = await Hero.insert(req.body);
+        res.status(201).json(newHero);
+    } catch(err) {
+        next(err);
+    }
 })
 
 
